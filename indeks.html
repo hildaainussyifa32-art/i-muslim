@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>imuslim</title>
+<style>
+:root{--bg:#e4e4e4;--sf:#f4f4f4;--tx:#111;--mt:#5a5a5a;--bd:#c4c4c4;--ac:#111;--ac-tx:#f4f4f4;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0b0b;--sf:#1a1a1a;--tx:#ececec;--mt:#9a9a9a;--bd:#333;--ac:#cfcfcf;--ac-tx:#0b0b0b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b0b0b;--sf:#1a1a1a;--tx:#ececec;--mt:#9a9a9a;--bd:#333;--ac:#cfcfcf;--ac-tx:#0b0b0b;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Georgia,'Times New Roman',serif;line-height:1.7}
+button,input,textarea,select{font:inherit;color:inherit}
+header{background:var(--sf);border-bottom:1px solid var(--bd);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.bar{max-width:1000px;margin:auto;padding:12px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:12px;justify-content:space-between}
+.logo{font-size:1.6rem;font-weight:700;letter-spacing:1px;text-decoration:none;color:var(--tx)}
+.logo span{color:var(--mt)}
+nav{display:flex;gap:6px;flex-wrap:wrap}
+nav a{padding:6px 12px;border-radius:6px;text-decoration:none;color:var(--mt);font-family:system-ui,sans-serif;font-size:.92rem}
+nav a.on,nav a:hover{background:var(--ac);color:var(--ac-tx)}
+.tools{display:flex;gap:8px}
+.btn{background:var(--ac);color:var(--ac-tx);border:0;border-radius:6px;padding:7px 14px;cursor:pointer;font-family:system-ui,sans-serif;font-size:.88rem}
+.btn.o{background:transparent;color:var(--tx);border:1px solid var(--bd)}
+.btn.d{background:#8a2b2b;color:#fff}
+main{max-width:1000px;margin:auto;padding:20px 16px 60px}
+h1.t{font-size:1.5rem;margin:8px 0 18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+.ph{width:100%;height:160px;object-fit:cover;background:linear-gradient(135deg,#2a2a2a,#8a8a8a);display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+.cb{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.cb h3{margin:0;font-size:1.1rem;cursor:pointer}
+.tag{font:.75rem system-ui,sans-serif;color:var(--mt);text-transform:uppercase;letter-spacing:1px}
+.ex{color:var(--mt);font-size:.92rem;margin:0}
+.row{display:flex;gap:6px;margin-top:auto}
+.empty{color:var(--mt);padding:30px 0}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:20px 12px;z-index:20}
+.ov.show{display:flex}
+.md{background:var(--sf);border:1px solid var(--bd);border-radius:10px;max-width:720px;width:100%;padding:20px}
+.md img.hero{width:100%;max-height:380px;object-fit:cover;border-radius:8px}
+.sup{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:16px}
+.sup img{width:100%;height:140px;object-fit:cover;border-radius:6px}
+label{display:block;margin:12px 0 4px;font:.85rem system-ui,sans-serif;color:var(--mt)}
+input[type=text],input[type=password],textarea,select{width:100%;padding:9px;border:1px solid var(--bd);border-radius:6px;background:var(--bg)}
+textarea{min-height:200px;resize:vertical}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.thumbs img{width:70px;height:70px;object-fit:cover;border-radius:6px}
+.err{color:#c44;font:.85rem system-ui,sans-serif;margin-top:8px}
+footer{text-align:center;color:var(--mt);font:.85rem system-ui,sans-serif;padding:20px}
+</style>
+</head>
+<body>
+<header><div class="bar">
+<a class="logo" href="#beranda">i<span>muslim</span></a>
+<nav id="nav">
+<a href="#beranda" data-v="beranda">Beranda</a>
+<a href="#adab-akhlak" data-v="adab-akhlak">Adab dan Akhlak</a>
+<a href="#fiqih-muslimah" data-v="fiqih-muslimah">Fiqih Muslimah</a>
+</nav>
+<div class="tools">
+<button class="btn o" id="theme"></button>
+<button class="btn" id="auth">Login Admin</button>
+</div></div></header>
+<main>
+<div id="adminbar" style="display:none;margin-bottom:14px"><button class="btn" id="add">+ Tambah Artikel</button></div>
+<h1 class="t" id="title"></h1>
+<div class="grid" id="list"></div>
+</main>
+<footer>© imuslim — artikel muslim</footer>
+
+<div class="ov" id="ovView"><div class="md" id="view"></div></div>
+
+<div class="ov" id="ovLogin"><div class="md" style="max-width:380px">
+<h2 style="margin-top:0">Login Admin</h2>
+<label>Username</label><input type="text" id="u" autocomplete="off">
+<label>Password</label><input type="password" id="p">
+<div class="err" id="lerr"></div>
+<div class="row" style="margin-top:16px"><button class="btn" id="doLogin">Masuk</button><button class="btn o" data-close>Batal</button></div>
+</div></div>
+
+<div class="ov" id="ovForm"><div class="md">
+<h2 style="margin-top:0" id="ftitle">Tambah Artikel</h2>
+<label>Judul artikel</label><input type="text" id="fj">
+<label>Kategori</label>
+<select id="fk"><option value="adab-akhlak">Adab dan Akhlak</option><option value="fiqih-muslimah">Fiqih Muslimah</option></select>
+<label>Foto utama</label><input type="file" id="fm" accept="image/*">
+<div class="thumbs" id="pm"></div>
+<label>Detail artikel (pisahkan paragraf dengan baris kosong)</label><textarea id="fd"></textarea>
+<label>Foto pendukung artikel (boleh lebih dari satu)</label><input type="file" id="fs" accept="image/*" multiple>
+<div class="thumbs" id="ps"></div>
+<div class="err" id="ferr"></div>
+<div class="row" style="margin-top:16px"><button class="btn" id="save">Simpan</button><button class="btn o" data-close>Batal</button></div>
+</div></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const CAT={'adab-akhlak':'Adab dan Akhlak','fiqih-muslimah':'Fiqih Muslimah'};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let arts=[],admin=false,editId=null,fMain='',fSup=[],view='beranda';
+
+/* storage aman */
+const ld=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}};
+const seed=[
+{id:'a1',cat:'adab-akhlak',judul:'Adab Berbicara dalam Islam',main:'',sup:[],detail:'Lisan adalah nikmat yang besar. Seorang muslim dianjurkan berkata baik atau diam, menjaga lisan dari ghibah, dusta, dan perkataan yang menyakiti.\n\nBerbicaralah dengan lembut, jelas, dan sesuai kebutuhan. Hindari memotong pembicaraan orang lain, dan dengarkan dengan penuh perhatian sebagai bentuk penghormatan.'},
+{id:'a2',cat:'fiqih-muslimah',judul:'Pengantar Fiqih Thaharah bagi Muslimah',main:'',sup:[],detail:'Thaharah (bersuci) adalah syarat sahnya banyak ibadah, terutama salat. Bagi muslimah, pembahasan thaharah juga mencakup hal-hal yang berkaitan dengan haid dan nifas.\n\nPelajarilah hukum-hukumnya dari ulama yang terpercaya dan kitab yang sahih, agar ibadah dilakukan dengan ilmu.'}
+];
+arts=ld('imuslim_arts',null)||seed;
+admin=ld('imuslim_admin',false);
+
+/* tema */
+function setTheme(t){document.documentElement.dataset.theme=t;$('theme').textContent=t==='dark'?'☀ Siang':'🌙 Malam';try{localStorage.setItem('imuslim_theme',t)}catch(e){}}
+let th=null;try{th=localStorage.getItem('imuslim_theme')}catch(e){}
+setTheme(th||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));
+$('theme').onclick=()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');
+
+/* render */
+function render(){
+  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===view));
+  $('title').textContent=view==='beranda'?'Artikel Terbaru':CAT[view];
+  $('auth').textContent=admin?'Logout ('+'hilda'+')':'Login Admin';
+  $('adminbar').style.display=admin?'block':'none';
+  const list=arts.filter(a=>view==='beranda'||a.cat===view);
+  $('list').innerHTML=list.length?list.map(a=>`<div class="card">${a.main?`<img class="ph" src="${a.main}" alt="">`:'<div class="ph">🕌</div>'}<div class="cb"><span class="tag">${CAT[a.cat]}</span><h3 data-open="${a.id}">${esc(a.judul)}</h3><p class="ex">${esc(a.detail.slice(0,110))}…</p><div class="row"><button class="btn o" data-open="${a.id}">Baca</button>${admin?`<button class="btn" data-edit="${a.id}">Edit</button><button class="btn d" data-del="${a.id}">Hapus</button>`:''}</div></div></div>`).join(''):'<p class="empty">Belum ada artikel.</p>';
+}
+function route(){const h=location.hash.slice(1);view=(h==='adab-akhlak'||h==='fiqih-muslimah')?h:'beranda';render()}
+addEventListener('hashchange',route);
+
+$('list').onclick=e=>{
+  const o=e.target.closest('[data-open]'),ed=e.target.closest('[data-edit]'),d=e.target.closest('[data-del]');
+  if(o)openArt(o.dataset.open);
+  else if(ed)openForm(ed.dataset.edit);
+  else if(d&&admin&&confirm('Hapus artikel ini?')){arts=arts.filter(a=>a.id!==d.dataset.del);sv('imuslim_arts',arts);render()}
+};
+function openArt(id){
+  const a=arts.find(x=>x.id===id);if(!a)return;
+  $('view').innerHTML=`<button class="btn o" data-close style="float:right">Tutup</button><span class="tag">${CAT[a.cat]}</span><h2 style="margin-top:4px">${esc(a.judul)}</h2>${a.main?`<img class="hero" src="${a.main}" alt="">`:''}${a.detail.split(/\n\s*\n/).map(p=>`<p>${esc(p).replace(/\n/g,'<br>')}</p>`).join('')}${a.sup.length?`<div class="sup">${a.sup.map(s=>`<img src="${s}" alt="">`).join('')}</div>`:''}`;
+  $('ovView').classList.add('show');
+}
+
+/* overlay */
+document.addEventListener('click',e=>{
+  if(e.target.closest('[data-close]')||e.target.classList.contains('ov'))document.querySelectorAll('.ov').forEach(o=>o.classList.remove('show'));
+});
+
+/* login */
+$('auth').onclick=()=>{
+  if(admin){admin=false;sv('imuslim_admin',false);render()}
+  else{$('u').value='';$('p').value='';$('lerr').textContent='';$('ovLogin').classList.add('show')}
+};
+$('doLogin').onclick=()=>{
+  if($('u').value.trim()==='hilda'&&$('p').value==='kagamish2'){admin=true;sv('imuslim_admin',true);$('ovLogin').classList.remove('show');render()}
+  else $('lerr').textContent='Username atau password salah.';
+};
+
+/* form */
+function thumbs(){$('pm').innerHTML=fMain?`<img src="${fMain}" alt="">`:'';$('ps').innerHTML=fSup.map(s=>`<img src="${s}" alt="">`).join('')}
+function openForm(id){
+  editId=id||null;const a=id?arts.find(x=>x.id===id):null;
+  $('ftitle').textContent=a?'Edit Artikel':'Tambah Artikel';
+  $('fj').value=a?a.judul:'';$('fk').value=a?a.cat:(view==='beranda'?'adab-akhlak':view);
+  $('fd').value=a?a.detail:'';fMain=a?a.main:'';fSup=a?[...a.sup]:[];
+  $('fm').value='';$('fs').value='';$('ferr').textContent='';thumbs();
+  $('ovForm').classList.add('show');
+}
+$('add').onclick=()=>openForm();
+function comp(file){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const m=800,s=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.7))};im.src=r.result};r.readAsDataURL(file)})}
+$('fm').onchange=async e=>{if(e.target.files[0]){fMain=await comp(e.target.files[0]);thumbs()}};
+$('fs').onchange=async e=>{for(const f of e.target.files)fSup.push(await comp(f));thumbs()};
+$('ps').onclick=e=>{if(e.target.tagName==='IMG'&&confirm('Hapus foto pendukung ini?')){fSup.splice([...$('ps').children].indexOf(e.target),1);thumbs()}};
+$('save').onclick=()=>{
+  const j=$('fj').value.trim(),d=$('fd').value.trim();
+  if(!j||!d){$('ferr').textContent='Judul dan detail artikel wajib diisi.';return}
+  const o={id:editId||'a'+Date.now(),cat:$('fk').value,judul:j,main:fMain,sup:fSup,detail:d};
+  const prev=arts;
+  arts=editId?arts.map(a=>a.id===editId?o:a):[o,...arts];
+  if(!sv('imuslim_arts',arts)){arts=prev;$('ferr').textContent='Penyimpanan penuh. Kurangi jumlah/ukuran foto.';return}
+  $('ovForm').classList.remove('show');render();
+};
+route();
+</script>
+</body>
+</html>
